@@ -1,4 +1,5 @@
 "use strict";
+const write = require("prompt-sync")();
 class Carta {
     constructor(_nome, _forca, _resistencia, _defesa, _vida) {
         this._nome = _nome;
@@ -77,11 +78,21 @@ class Luta {
     }
 }
 class Dado {
-    constructor(_lados) {
+    constructor(_lados, _jogado = false) {
         this._lados = _lados;
+        this._jogado = _jogado;
+    }
+    get lados() {
+        return this._lados;
+    }
+    get jogado() {
+        return this._jogado;
+    }
+    set jogado(jogado) {
+        this._jogado = jogado;
     }
     jogar() {
-        console.log("Dado jogado " + this._lados);
+        this._jogado = true;
         return Math.floor(Math.random() * this._lados) + 1;
     }
 }
@@ -115,5 +126,35 @@ class Jogo {
         luta.atacar();
     }
 }
+function menu() {
+    while (true) {
+        console.log("»»——————————　★　——————————««");
+        console.log("");
+        console.log("1--Rolar o dado");
+        console.log("2--Atacar");
+        console.log("3--Encerrar jogo");
+        console.log("");
+        console.log("»»——————————　★　——————————««");
+        const opcao = +write("Escolha uma opção: ");
+        switch (opcao) {
+            case 1:
+                const dado = new Dado(6);
+                console.log(`O seu dado caiu em ${dado.jogar()}`);
+                break;
+            case 2:
+                const jogo = new Jogo();
+                if (dado.lados === 0) {
+                    console.log("Você precisa rolar o dado primeiro");
+                }
+                jogo.jogar();
+                break;
+            case 3:
+                throw console.error("O jogo foi encerrado");
+            default:
+                console.log("Opção inválida");
+                break;
+        }
+    }
+}
 const jogo = new Jogo();
-jogo.jogar();
+menu();
