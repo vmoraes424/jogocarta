@@ -1,13 +1,14 @@
+import { Item } from "./Item";
 const write = require("prompt-sync")();
 
-class Carta {
+export class Carta {
   constructor(
     private _nome: string,
     private _forca: number,
     private _resistencia: number,
     private _defesa: number,
     private _vida: number
-  ) { }
+  ) {}
 
   public get forca(): number {
     return this._forca;
@@ -52,7 +53,7 @@ const cartas = [
   new Carta("Deméter", 10, 10, 10, 10),
   new Carta("Hefesto", 10, 10, 10, 10),
   new Carta("Apolo", 10, 10, 10, 10),
-]
+];
 
 class Randomizar {
   static randomizarCarta(carta: Carta[]): Carta {
@@ -61,16 +62,13 @@ class Randomizar {
 }
 
 class Luta {
-  constructor(
-    private _atacante: Carta,
-    private _defensor: Carta
-  ) { }
+  constructor(private _atacante: Carta, private _defensor: Carta) {}
 
   public get atacante(): Carta {
     return this._atacante;
   }
   public set atacante(atacante: Carta) {
-     this._atacante = atacante;
+    this._atacante = atacante;
   }
   public get defensor(): Carta {
     return this._defensor;
@@ -85,21 +83,18 @@ class Luta {
 }
 
 class Dado {
-  constructor(
-    private _lados: number,
-    private _jogado: boolean = false
-  ) { }
+  constructor(private _lados: number, private _jogado: boolean = false) {}
 
-    public get lados(): number {
-      return this._lados;
-    }
+  public get lados(): number {
+    return this._lados;
+  }
 
-    public get jogado(): boolean {
-      return this._jogado;
-    }
-    public set jogado(jogado: boolean) {
-      this._jogado = jogado;
-    }
+  public get jogado(): boolean {
+    return this._jogado;
+  }
+  public set jogado(jogado: boolean) {
+    this._jogado = jogado;
+  }
 
   public jogar(): number {
     this._jogado = true;
@@ -110,6 +105,7 @@ class Dado {
 class Jogo {
   private _jogador1: Carta;
   private _jogador2: Carta;
+  private _randomizado: boolean = false;
 
   constructor() {
     this._jogador1 = Randomizar.randomizarCarta(cartas);
@@ -128,14 +124,22 @@ class Jogo {
   public set jogador2(jogador2: Carta) {
     this._jogador2 = jogador2;
   }
+  public get randomizado(): boolean {
+    return this._randomizado;
+  }
 
   public darCartas(): void {
     const carta1 = cartas[Math.floor(Math.random() * cartas.length)];
     const carta2 = cartas[Math.floor(Math.random() * cartas.length)];
     this._jogador1 = carta1;
     this._jogador2 = carta2;
-    console.log(`Jogador 1: ${this._jogador1.nome} - ${this._jogador1.forca} - ${this._jogador1.resistencia} - ${this._jogador1.defesa} - ${this._jogador1.vida}`);
-    console.log(`Jogador 2: ${this._jogador2.nome} - ${this._jogador2.forca} - ${this._jogador2.resistencia} - ${this._jogador2.defesa} - ${this._jogador2.vida}`);
+    console.log(
+      `Jogador 1: ${this._jogador1.nome} - ${this._jogador1.forca} - ${this._jogador1.resistencia} - ${this._jogador1.defesa} - ${this._jogador1.vida}`
+    );
+    console.log(
+      `Jogador 2: ${this._jogador2.nome} - ${this._jogador2.forca} - ${this._jogador2.resistencia} - ${this._jogador2.defesa} - ${this._jogador2.vida}`
+    );
+    this._randomizado = true;
   }
 
   public jogar(): void {
@@ -145,37 +149,48 @@ class Jogo {
 }
 
 function menu() {
-  while(true) {
-        console.log("»»——————————　★　——————————««");
-        console.log("")
-        console.log("1--Rolar o dado");
-        console.log("2--Atacar");
-        console.log("3--Encerrar jogo");
-        console.log("")
-        console.log("»»——————————　★　——————————««");
+  const jogo = new Jogo();
+  jogo.darCartas();
+
+  while (true) {
+    const dado = new Dado(6);
     
-        const opcao = +write("Escolha uma opção: ");
-        switch(opcao) {
-          case 1:
-            const dado = new Dado(6);
-            console.log(`O seu dado caiu em ${dado.jogar()}`);
-            break;
-          case 2:
-            const jogo = new Jogo();
-            if(dado.lados === 0) {
-              console.log("Você precisa rolar o dado primeiro");
-            }
-            jogo.jogar();
-            break;
-          case 3:
-            throw console.error("O jogo foi encerrado");
-          default:
-            console.log("Opção inválida");
-            break;
+    const item = new Item()
+
+    console.log("»»——————————　★　——————————««");
+    console.log("");
+    console.log("1--Rolar o dado");
+    console.log("2--Atacar");
+    console.log("3--Encerrar jogo");
+    console.log("4--Testar item");
+    console.log("");
+    console.log("»»——————————　★　——————————««");
+
+    const opcao = +write("Escolha uma opção: ");
+    switch (opcao) {
+      case 1:
+        console.log(`O seu dado caiu em ${dado.jogar()}`);
+        break;
+      case 2:
+        if (dado.jogado === false) {
+          console.log("Você precisa rolar o dado primeiro");
         }
+        jogo.jogar();
+        break;
+      case 3:
+        throw console.error("O jogo foi encerrado");
+      case 4:
+        item.tocha(jogo.jogador1)
+        item.escudo(jogo.jogador2)
+        console.log(jogo.jogador1);
+        console.log(jogo.jogador2);
+        break;
+      default:
+        console.log("Opção inválida");
+        break;
+    }
   }
 }
 
 const jogo = new Jogo();
 menu();
-
