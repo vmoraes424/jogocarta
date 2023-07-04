@@ -32,6 +32,7 @@ export class Carta {
     return this._vida;
   }
   public set vida(vida: number) {
+    if (vida <= 0) throw new Error("Vida não pode ser menor que 0");
     this._vida = vida;
   }
   public get nome(): string {
@@ -43,16 +44,16 @@ export class Carta {
 }
 
 const cartas = [
-  new Carta("Zeus", 10, 10, 10, 10),
-  new Carta("Poseidon", 10, 10, 10, 10),
-  new Carta("Atena", 10, 10, 10, 10),
-  new Carta("Ares", 10, 10, 10, 10),
-  new Carta("Ártemis", 10, 10, 10, 10),
-  new Carta("Hermes", 10, 10, 10, 10),
-  new Carta("Hera", 10, 10, 10, 10),
-  new Carta("Deméter", 10, 10, 10, 10),
-  new Carta("Hefesto", 10, 10, 10, 10),
-  new Carta("Apolo", 10, 10, 10, 10),
+  new Carta("Zeus", 10, 10, 10, 100),
+  new Carta("Poseidon", 10, 10, 10, 100),
+  new Carta("Atena", 10, 10, 10, 100),
+  new Carta("Ares", 10, 10, 10, 100),
+  new Carta("Ártemis", 10, 10, 10, 100),
+  new Carta("Hermes", 10, 10, 10, 100),
+  new Carta("Hera", 10, 10, 10, 100),
+  new Carta("Deméter", 10, 10, 10, 100),
+  new Carta("Hefesto", 10, 10, 10, 100),
+  new Carta("Apolo", 10, 10, 10, 100),
 ];
 
 class Randomizar {
@@ -79,25 +80,34 @@ class Luta {
 
   public atacar(): void {
     this._defensor.vida -= this._atacante.forca;
+    console.log(this._atacante.nome + " atacou " + this._defensor.nome);
+    console.log(this._atacante.vida + " " + this._defensor.vida);
   }
 }
 
 class Dado {
-  constructor(private _lados: number, private _jogado: boolean = false) {}
+  private item: Item[];
+  constructor(private _lados: number) {
+    this.item = [
+      new Item("Tocha", 10, 10, 10, 10),
+      new Item("Escudo", 10, 10, 10, 10),
+      new Item("Espada", 10, 10, 10, 10),
+      new Item("Arco", 10, 10, 10, 10),
+      new Item("Flecha", 10, 10, 10, 10),
+      new Item("Lança", 10, 10, 10, 10),
+      new Item("Adaga", 10, 10, 10, 10),
+    ];
+  }
+
+  public sortearItem(): Item {
+    return this.item[Math.floor(Math.random() * this.item.length)];
+  }
 
   public get lados(): number {
     return this._lados;
   }
 
-  public get jogado(): boolean {
-    return this._jogado;
-  }
-  public set jogado(jogado: boolean) {
-    this._jogado = jogado;
-  }
-
   public jogar(): number {
-    this._jogado = true;
     return Math.floor(Math.random() * this._lados) + 1;
   }
 }
@@ -154,8 +164,6 @@ function menu() {
 
   while (true) {
     const dado = new Dado(6);
-    
-    const item = new Item()
 
     console.log("»»——————————　★　——————————««");
     console.log("");
@@ -163,6 +171,7 @@ function menu() {
     console.log("2--Atacar");
     console.log("3--Encerrar jogo");
     console.log("4--Testar item");
+    console.log("5--Testar personagem");
     console.log("");
     console.log("»»——————————　★　——————————««");
 
@@ -172,19 +181,15 @@ function menu() {
         console.log(`O seu dado caiu em ${dado.jogar()}`);
         break;
       case 2:
-        if (dado.jogado === false) {
-          console.log("Você precisa rolar o dado primeiro");
-        }
         jogo.jogar();
         break;
       case 3:
         throw console.error("O jogo foi encerrado");
       case 4:
-        item.tocha(jogo.jogador1)
-        item.escudo(jogo.jogador2)
-        console.log(jogo.jogador1);
-        console.log(jogo.jogador2);
         break;
+      case 5:
+        console.table(jogo.jogador1);
+        console.table(jogo.jogador2);
       default:
         console.log("Opção inválida");
         break;
