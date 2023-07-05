@@ -32,21 +32,18 @@ export class Item {
   }
 
   public modificarForca(carta: Carta, novaForca: number): void {
-    carta.forca = novaForca;
+    carta.forca += novaForca;
   }
 
   public modificarResistencia(carta: Carta, novaResistencia: number): void {
-    carta.resistencia = novaResistencia;
+    carta.resistencia += novaResistencia;
   }
 
   public modificarDefesa(carta: Carta, novaDefesa: number): void {
-    carta.defesa = novaDefesa;
+    carta.defesa += novaDefesa;
   }
 
   public modificarVida(carta: Carta, novaVida: number): void {
-    carta.vida = novaVida;
-  }
-  public clone(): Item {
-    return new Item(this._nome, this._forca, this._resistencia, this._defesa, this._vida);
+    carta.vida += novaVida;
   }
 }

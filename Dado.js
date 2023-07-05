@@ -7,7 +7,7 @@ class Dado {
     constructor(_lados) {
         this._lados = _lados;
         this.item = [
-            new Item_1.Item("Tocha", 10, 10, 10, 10),
+            new Item_1.Item("Tocha", 10, 0, 0, 0),
             new Item_1.Item("Escudo", 10, 10, 10, 10),
             new Item_1.Item("Espada", 10, 10, 10, 10),
             new Item_1.Item("Arco", 10, 10, 10, 10),
@@ -22,24 +22,15 @@ class Dado {
     get lados() {
         return this._lados;
     }
-    sortearItem() {
+    sortearItem(carta) {
         const itemSorteado = this.item[Math.floor(Math.random() * this.item.length)];
-        this._itemSorteado = itemSorteado.clone();
-        exports.itens.push(this._itemSorteado);
-        console.log(exports.itens);
-        console.log("\n\n\nVocê recebeu o item " + this._itemSorteado.nome);
-    }
-    usarItem() {
-        var _a;
-        if (exports.itens.length === 0) {
-            console.log("\n\n\nVocê não tem itens.");
-        }
-        else {
-            console.log("\n\n\nVocê usou o item " + ((_a = this._itemSorteado) === null || _a === void 0 ? void 0 : _a.nome));
-        }
+        itemSorteado.modificarDefesa(carta, itemSorteado.defesa);
+        itemSorteado.modificarForca(carta, itemSorteado.forca);
+        itemSorteado.modificarResistencia(carta, itemSorteado.resistencia);
+        itemSorteado.modificarVida(carta, itemSorteado.vida);
+        console.log("\n\n\nVocê recebeu o item " + itemSorteado.nome);
     }
     jogar() {
-        this.sortearItem();
         return Math.floor(Math.random() * this._lados) + 1;
     }
 }

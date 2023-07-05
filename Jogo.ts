@@ -57,8 +57,6 @@ const cartas = [
   new Carta("Apolo", 10, 10, 10, 100),
 ];
 
-
-
 class Luta {
   constructor(private _atacante: Carta, private _defensor: Carta) { }
 
@@ -159,7 +157,6 @@ function menu() {
     console.log("1--Rolar o dado");
     console.log("2--Atacar");
     console.log("3--Encerrar jogo");
-    console.log("4--Testar item");
     console.log("5--Testar personagem");
     console.log("");
     console.log("6--Ver itens");
@@ -169,7 +166,8 @@ function menu() {
     const opcao = +write("Escolha uma opção: ");
     switch (opcao) {
       case 1:
-        console.log(`O seu dado caiu em ${dado.jogar()}`);
+        console.log(`\nO seu dado caiu em ${dado.jogar()}\n`);
+        dado.sortearItem(jogo.jogador1);
         break;
       case 2:
         jogo.jogar();
@@ -177,7 +175,6 @@ function menu() {
       case 3:
         throw console.error("O jogo foi encerrado");
       case 4:
-        dado.usarItem();
         break;
       case 5:
         console.table(jogo.jogador1);

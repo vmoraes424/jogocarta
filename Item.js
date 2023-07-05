@@ -26,19 +26,16 @@ class Item {
         return this._vida;
     }
     modificarForca(carta, novaForca) {
-        carta.forca = novaForca;
+        carta.forca += novaForca;
     }
     modificarResistencia(carta, novaResistencia) {
-        carta.resistencia = novaResistencia;
+        carta.resistencia += novaResistencia;
     }
     modificarDefesa(carta, novaDefesa) {
-        carta.defesa = novaDefesa;
+        carta.defesa += novaDefesa;
     }
     modificarVida(carta, novaVida) {
-        carta.vida = novaVida;
-    }
-    clone() {
-        return new Item(this._nome, this._forca, this._resistencia, this._defesa, this._vida);
+        carta.vida += novaVida;
     }
 }
 exports.Item = Item;

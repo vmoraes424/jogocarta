@@ -1,4 +1,5 @@
 import { Item } from "./Item";
+import { Carta } from "./Jogo";
 
 export let itens: Item[] = [];
 
@@ -8,7 +9,7 @@ export class Dado {
 
   constructor(private _lados: number) {
     this.item = [
-      new Item("Tocha", 10, 10, 10, 10),
+      new Item("Tocha", 10, 0, 0, 0),
       new Item("Escudo", 10, 10, 10, 10),
       new Item("Espada", 10, 10, 10, 10),
       new Item("Arco", 10, 10, 10, 10),
@@ -26,24 +27,16 @@ export class Dado {
     return this._lados;
   }
 
-  public sortearItem(): void {
+  public sortearItem(carta: Carta): void {
     const itemSorteado = this.item[Math.floor(Math.random() * this.item.length)];
-    this._itemSorteado = itemSorteado.clone();
-    itens.push(this._itemSorteado);
-    console.log(itens);
-    console.log("\n\n\nVocê recebeu o item " + this._itemSorteado.nome);
-  }
-
-  public usarItem(): void {
-    if (itens.length === 0) {
-      console.log("\n\n\nVocê não tem itens.");
-    } else {
-      console.log("\n\n\nVocê usou o item " + this._itemSorteado?.nome);
-    }
+    itemSorteado.modificarDefesa(carta, itemSorteado.defesa);
+    itemSorteado.modificarForca(carta, itemSorteado.forca);
+    itemSorteado.modificarResistencia(carta, itemSorteado.resistencia);
+    itemSorteado.modificarVida(carta, itemSorteado.vida);
+    console.log("\n\n\nVocê recebeu o item " + itemSorteado.nome);
   }
 
   public jogar(): number {
-    this.sortearItem();
     return Math.floor(Math.random() * this._lados) + 1;
   }
 }
