@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Dado = void 0;
+exports.Dado = exports.itens = void 0;
 const Item_1 = require("./Item");
+exports.itens = [];
 class Dado {
     constructor(_lados) {
         this._lados = _lados;
-        this.itensRecebidos = [];
         this.item = [
             new Item_1.Item("Tocha", 10, 10, 10, 10),
             new Item_1.Item("Escudo", 10, 10, 10, 10),
@@ -22,18 +22,16 @@ class Dado {
     get lados() {
         return this._lados;
     }
-    get itens() {
-        return this.itensRecebidos;
-    }
     sortearItem() {
         const itemSorteado = this.item[Math.floor(Math.random() * this.item.length)];
         this._itemSorteado = itemSorteado.clone();
-        this.itensRecebidos.push(this._itemSorteado);
+        exports.itens.push(this._itemSorteado);
+        console.log(exports.itens);
         console.log("\n\n\nVocê recebeu o item " + this._itemSorteado.nome);
     }
     usarItem() {
         var _a;
-        if (this.itensRecebidos.length === 0) {
+        if (exports.itens.length === 0) {
             console.log("\n\n\nVocê não tem itens.");
         }
         else {

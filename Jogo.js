@@ -84,11 +84,11 @@ class Luta {
     contraAtacar() {
         if (Util_1.Util.chance(40)) {
             this._atacante.vida -= this._defensor.forca;
-            console.log(`${this._defensor.nome} contra-atacou!`);
+            console.log(`${this._atacante.nome} contra-atacou!`);
             console.log(`Sua vida: ${this._atacante.vida}\n`);
         }
         else {
-            console.log("Você se esquivou do contra-ataque de " + this._defensor.nome);
+            console.log("Você se esquivou do contra-ataque de " + this._atacante.nome);
         }
     }
     inimigoAtacar() {
@@ -167,7 +167,7 @@ function menu() {
                 console.table(jogo.jogador1);
                 console.table(jogo.jogador2);
             case 6:
-                console.log(dado.itens);
+                console.log(Dado_1.itens);
             default:
                 console.log("Opção inválida");
                 break;

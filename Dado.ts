@@ -1,9 +1,10 @@
 import { Item } from "./Item";
 
+export let itens: Item[] = [];
+
 export class Dado {
   private item: Item[];
   private _itemSorteado: Item | undefined;
-  private itensRecebidos: Item[] = [];
 
   constructor(private _lados: number) {
     this.item = [
@@ -25,19 +26,16 @@ export class Dado {
     return this._lados;
   }
 
-  public get itens(): Item[] {
-    return this.itensRecebidos;
-  }
-
   public sortearItem(): void {
     const itemSorteado = this.item[Math.floor(Math.random() * this.item.length)];
     this._itemSorteado = itemSorteado.clone();
-    this.itensRecebidos.push(this._itemSorteado);
+    itens.push(this._itemSorteado);
+    console.log(itens);
     console.log("\n\n\nVocê recebeu o item " + this._itemSorteado.nome);
   }
 
   public usarItem(): void {
-    if (this.itensRecebidos.length === 0) {
+    if (itens.length === 0) {
       console.log("\n\n\nVocê não tem itens.");
     } else {
       console.log("\n\n\nVocê usou o item " + this._itemSorteado?.nome);
