@@ -37,13 +37,8 @@ class Item {
     modificarVida(carta, novaVida) {
         carta.vida = novaVida;
     }
-    tocha(carta) {
-        this.modificarForca(carta, carta.forca + 5);
-        console.log("Força aumentada em 5");
-    }
-    escudo(carta) {
-        this.modificarDefesa(carta, carta.defesa + 5);
-        console.log("Defesa aumentada em 5");
+    clone() {
+        return new Item(this._nome, this._forca, this._resistencia, this._defesa, this._vida);
     }
 }
 exports.Item = Item;

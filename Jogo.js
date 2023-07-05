@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Carta = void 0;
-const Item_1 = require("./Item");
+const Dado_1 = require("./Dado");
+const Util_1 = require("./Util");
 const write = require("prompt-sync")();
 class Carta {
     constructor(_nome, _forca, _resistencia, _defesa, _vida) {
@@ -57,11 +58,6 @@ const cartas = [
     new Carta("Hefesto", 10, 10, 10, 100),
     new Carta("Apolo", 10, 10, 10, 100),
 ];
-class Randomizar {
-    static randomizarCarta(carta) {
-        return carta[Math.floor(Math.random() * carta.length)];
-    }
-}
 class Luta {
     constructor(_atacante, _defensor) {
         this._atacante = _atacante;
@@ -81,38 +77,32 @@ class Luta {
     }
     atacar() {
         this._defensor.vida -= this._atacante.forca;
-        console.log(this._atacante.nome + " atacou " + this._defensor.nome);
-        console.log(this._atacante.vida + " " + this._defensor.vida);
+        console.log("»»——————————　★　——————————««\nVocê atacou " + this._defensor.nome);
+        console.log(`Vida de ${this._defensor.nome}: ${this._defensor.vida}`);
+        this.contraAtacar();
     }
-}
-class Dado {
-    constructor(_lados) {
-        this._lados = _lados;
-        this.item = [
-            new Item_1.Item("Tocha", 10, 10, 10, 10),
-            new Item_1.Item("Escudo", 10, 10, 10, 10),
-            new Item_1.Item("Espada", 10, 10, 10, 10),
-            new Item_1.Item("Arco", 10, 10, 10, 10),
-            new Item_1.Item("Flecha", 10, 10, 10, 10),
-            new Item_1.Item("Lança", 10, 10, 10, 10),
-            new Item_1.Item("Adaga", 10, 10, 10, 10),
-        ];
+    contraAtacar() {
+        if (Util_1.Util.chance(40)) {
+            this._atacante.vida -= this._defensor.forca;
+            console.log(`${this._defensor.nome} contra-atacou!`);
+            console.log(`Sua vida: ${this._atacante.vida}\n`);
+        }
+        else {
+            console.log("Você se esquivou do contra-ataque de " + this._defensor.nome);
+        }
     }
-    sortearItem() {
-        return this.item[Math.floor(Math.random() * this.item.length)];
-    }
-    get lados() {
-        return this._lados;
-    }
-    jogar() {
-        return Math.floor(Math.random() * this._lados) + 1;
+    inimigoAtacar() {
+        this._atacante.vida -= this._defensor.forca;
+        console.log("\nVocê foi atacado por " + this._defensor.nome);
+        console.log(`Sua vida: ${this._atacante.vida}`);
+        this.contraAtacar();
     }
 }
 class Jogo {
     constructor() {
         this._randomizado = false;
-        this._jogador1 = Randomizar.randomizarCarta(cartas);
-        this._jogador2 = Randomizar.randomizarCarta(cartas);
+        this._jogador1 = Util_1.Util.randomizarCarta(cartas);
+        this._jogador2 = Util_1.Util.randomizarCarta(cartas);
     }
     get jogador1() {
         return this._jogador1;
@@ -141,13 +131,14 @@ class Jogo {
     jogar() {
         const luta = new Luta(this._jogador1, this._jogador2);
         luta.atacar();
+        luta.inimigoAtacar();
     }
 }
 function menu() {
     const jogo = new Jogo();
     jogo.darCartas();
     while (true) {
-        const dado = new Dado(6);
+        const dado = new Dado_1.Dado(6);
         console.log("»»——————————　★　——————————««");
         console.log("");
         console.log("1--Rolar o dado");
@@ -155,6 +146,8 @@ function menu() {
         console.log("3--Encerrar jogo");
         console.log("4--Testar item");
         console.log("5--Testar personagem");
+        console.log("");
+        console.log("6--Ver itens");
         console.log("");
         console.log("»»——————————　★　——————————««");
         const opcao = +write("Escolha uma opção: ");
@@ -168,15 +161,17 @@ function menu() {
             case 3:
                 throw console.error("O jogo foi encerrado");
             case 4:
+                dado.usarItem();
                 break;
             case 5:
                 console.table(jogo.jogador1);
                 console.table(jogo.jogador2);
+            case 6:
+                console.log(dado.itens);
             default:
                 console.log("Opção inválida");
                 break;
         }
     }
 }
-const jogo = new Jogo();
 menu();

@@ -9,7 +9,7 @@ export class Item {
     private _resistencia: number,
     private _defesa: number,
     private _vida: number
-  ) {}
+  ) { }
 
   public get nome(): string {
     return this._nome;
@@ -46,14 +46,7 @@ export class Item {
   public modificarVida(carta: Carta, novaVida: number): void {
     carta.vida = novaVida;
   }
-
-  public tocha(carta: Carta): void {
-    this.modificarForca(carta, carta.forca + 5);
-    console.log("Força aumentada em 5");
-  }
-
-  public escudo(carta: Carta): void {
-    this.modificarDefesa(carta, carta.defesa + 5);
-    console.log("Defesa aumentada em 5");
+  public clone(): Item {
+    return new Item(this._nome, this._forca, this._resistencia, this._defesa, this._vida);
   }
 }

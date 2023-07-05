@@ -1,4 +1,5 @@
-import { Item } from "./Item";
+import { Dado } from "./Dado";
+import { Util } from "./Util";
 const write = require("prompt-sync")();
 
 export class Carta {
@@ -8,7 +9,7 @@ export class Carta {
     private _resistencia: number,
     private _defesa: number,
     private _vida: number
-  ) {}
+  ) { }
 
   public get forca(): number {
     return this._forca;
@@ -56,14 +57,10 @@ const cartas = [
   new Carta("Apolo", 10, 10, 10, 100),
 ];
 
-class Randomizar {
-  static randomizarCarta(carta: Carta[]): Carta {
-    return carta[Math.floor(Math.random() * carta.length)];
-  }
-}
+
 
 class Luta {
-  constructor(private _atacante: Carta, private _defensor: Carta) {}
+  constructor(private _atacante: Carta, private _defensor: Carta) { }
 
   public get atacante(): Carta {
     return this._atacante;
@@ -80,35 +77,26 @@ class Luta {
 
   public atacar(): void {
     this._defensor.vida -= this._atacante.forca;
-    console.log(this._atacante.nome + " atacou " + this._defensor.nome);
-    console.log(this._atacante.vida + " " + this._defensor.vida);
-  }
-}
-
-class Dado {
-  private item: Item[];
-  constructor(private _lados: number) {
-    this.item = [
-      new Item("Tocha", 10, 10, 10, 10),
-      new Item("Escudo", 10, 10, 10, 10),
-      new Item("Espada", 10, 10, 10, 10),
-      new Item("Arco", 10, 10, 10, 10),
-      new Item("Flecha", 10, 10, 10, 10),
-      new Item("Lança", 10, 10, 10, 10),
-      new Item("Adaga", 10, 10, 10, 10),
-    ];
+    console.log("»»——————————　★　——————————««\nVocê atacou " + this._defensor.nome);
+    console.log(`Vida de ${this._defensor.nome}: ${this._defensor.vida}`);
+    this.contraAtacar();
   }
 
-  public sortearItem(): Item {
-    return this.item[Math.floor(Math.random() * this.item.length)];
+  public contraAtacar(): void {
+    if (Util.chance(40)) {
+      this._atacante.vida -= this._defensor.forca;
+      console.log(`${this._defensor.nome} contra-atacou!`);
+      console.log(`Sua vida: ${this._atacante.vida}\n`);
+    } else {
+      console.log("Você se esquivou do contra-ataque de " + this._defensor.nome);
+    }
   }
 
-  public get lados(): number {
-    return this._lados;
-  }
-
-  public jogar(): number {
-    return Math.floor(Math.random() * this._lados) + 1;
+  public inimigoAtacar(): void {
+    this._atacante.vida -= this._defensor.forca;
+    console.log("\nVocê foi atacado por " + this._defensor.nome);
+    console.log(`Sua vida: ${this._atacante.vida}`);
+    this.contraAtacar();
   }
 }
 
@@ -118,8 +106,8 @@ class Jogo {
   private _randomizado: boolean = false;
 
   constructor() {
-    this._jogador1 = Randomizar.randomizarCarta(cartas);
-    this._jogador2 = Randomizar.randomizarCarta(cartas);
+    this._jogador1 = Util.randomizarCarta(cartas);
+    this._jogador2 = Util.randomizarCarta(cartas);
   }
 
   public get jogador1(): Carta {
@@ -155,6 +143,7 @@ class Jogo {
   public jogar(): void {
     const luta = new Luta(this._jogador1, this._jogador2);
     luta.atacar();
+    luta.inimigoAtacar();
   }
 }
 
@@ -173,6 +162,8 @@ function menu() {
     console.log("4--Testar item");
     console.log("5--Testar personagem");
     console.log("");
+    console.log("6--Ver itens");
+    console.log("");
     console.log("»»——————————　★　——————————««");
 
     const opcao = +write("Escolha uma opção: ");
@@ -186,16 +177,17 @@ function menu() {
       case 3:
         throw console.error("O jogo foi encerrado");
       case 4:
+        dado.usarItem();
         break;
       case 5:
         console.table(jogo.jogador1);
         console.table(jogo.jogador2);
+      case 6:
+        console.log(dado.itens)
       default:
         console.log("Opção inválida");
         break;
     }
   }
 }
-
-const jogo = new Jogo();
 menu();
