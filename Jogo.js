@@ -5,10 +5,9 @@ const Dado_1 = require("./Dado");
 const Util_1 = require("./Util");
 const write = require("prompt-sync")();
 class Carta {
-    constructor(_nome, _forca, _resistencia, _defesa, _vida) {
+    constructor(_nome, _forca, _defesa, _vida) {
         this._nome = _nome;
         this._forca = _forca;
-        this._resistencia = _resistencia;
         this._defesa = _defesa;
         this._vida = _vida;
     }
@@ -17,12 +16,6 @@ class Carta {
     }
     set forca(forca) {
         this._forca = forca;
-    }
-    get resistencia() {
-        return this._resistencia;
-    }
-    set resistencia(resistencia) {
-        this._resistencia = resistencia;
     }
     get defesa() {
         return this._defesa;
@@ -35,7 +28,7 @@ class Carta {
     }
     set vida(vida) {
         if (vida <= 0)
-            throw new Error("Vida não pode ser menor que 0");
+            throw new Error(this.nome + " morreu");
         this._vida = vida;
     }
     get nome() {
@@ -47,16 +40,16 @@ class Carta {
 }
 exports.Carta = Carta;
 const cartas = [
-    new Carta("Zeus", 10, 10, 10, 100),
-    new Carta("Poseidon", 10, 10, 10, 100),
-    new Carta("Atena", 10, 10, 10, 100),
-    new Carta("Ares", 10, 10, 10, 100),
-    new Carta("Ártemis", 10, 10, 10, 100),
-    new Carta("Hermes", 10, 10, 10, 100),
-    new Carta("Hera", 10, 10, 10, 100),
-    new Carta("Deméter", 10, 10, 10, 100),
-    new Carta("Hefesto", 10, 10, 10, 100),
-    new Carta("Apolo", 10, 10, 10, 100),
+    new Carta("Zeus", 20, 10, 90),
+    new Carta("Poseidon", 5, 15, 150),
+    new Carta("Atena", 3, 20, 150),
+    new Carta("Ares", 5, 50, 50),
+    new Carta("Ártemis", 10, 10, 100),
+    new Carta("Hermes", 10, 15, 120),
+    new Carta("Hera", 15, 5, 100),
+    new Carta("Deméter", 5, 15, 150),
+    new Carta("Hefesto", 20, 20, 70),
+    new Carta("Apolo", 18, 15, 110),
 ];
 class Luta {
     constructor(_atacante, _defensor) {
@@ -76,26 +69,28 @@ class Luta {
         this._defensor = defensor;
     }
     atacar() {
-        this._defensor.vida -= this._atacante.forca;
-        console.log("»»——————————　★　——————————««\nVocê atacou " + this._defensor.nome);
+        this._defensor.vida -= this._atacante.forca - (this._atacante.defesa * 0.2);
+        console.log(`»»——————————　★　——————————««\n${this._atacante.nome} atacou ${this._defensor.nome}`);
         console.log(`Vida de ${this._defensor.nome}: ${this._defensor.vida}`);
-        this.contraAtacar();
+        this.contraAtacar(this._atacante, this._defensor);
+        console.table(this._defensor);
     }
-    contraAtacar() {
+    contraAtacar(jogador1, jogador2) {
         if (Util_1.Util.chance(40)) {
-            this._atacante.vida -= this._defensor.forca;
-            console.log(`${this._atacante.nome} contra-atacou!`);
-            console.log(`Sua vida: ${this._atacante.vida}\n`);
+            jogador1.vida -= jogador2.forca - (jogador1.defesa * 0.5);
+            console.log(`${jogador2.nome} contra-atacou!`);
+            console.log(`Vida de ${jogador1.nome}: ${jogador1.vida}\n`);
         }
         else {
-            console.log("Você se esquivou do contra-ataque de " + this._atacante.nome);
+            console.log(`${jogador1.nome} se esquivou do contra-ataque de ${jogador2.nome}\n`);
         }
     }
     inimigoAtacar() {
-        this._atacante.vida -= this._defensor.forca;
-        console.log("\nVocê foi atacado por " + this._defensor.nome);
-        console.log(`Sua vida: ${this._atacante.vida}`);
-        this.contraAtacar();
+        this._atacante.vida -= this._defensor.forca - (this._atacante.defesa * 0.2);
+        console.log(`\n${this._atacante.nome} foi atacado por ${this._defensor.nome}`);
+        console.log(`Vida de ${this._atacante.nome}: ${this._atacante.vida}`);
+        this.contraAtacar(this._defensor, this._atacante);
+        console.table(this._atacante);
     }
 }
 class Jogo {
@@ -124,8 +119,6 @@ class Jogo {
         const carta2 = cartas[Math.floor(Math.random() * cartas.length)];
         this._jogador1 = carta1;
         this._jogador2 = carta2;
-        console.log(`Jogador 1: ${this._jogador1.nome} - ${this._jogador1.forca} - ${this._jogador1.resistencia} - ${this._jogador1.defesa} - ${this._jogador1.vida}`);
-        console.log(`Jogador 2: ${this._jogador2.nome} - ${this._jogador2.forca} - ${this._jogador2.resistencia} - ${this._jogador2.defesa} - ${this._jogador2.vida}`);
         this._randomizado = true;
     }
     jogar() {
@@ -137,6 +130,8 @@ class Jogo {
 function menu() {
     const jogo = new Jogo();
     jogo.darCartas();
+    console.table(jogo.jogador1);
+    console.table(jogo.jogador2);
     while (true) {
         const dado = new Dado_1.Dado(6);
         console.log("»»——————————　★　——————————««");
@@ -144,16 +139,15 @@ function menu() {
         console.log("1--Rolar o dado");
         console.log("2--Atacar");
         console.log("3--Encerrar jogo");
-        console.log("5--Testar personagem");
-        console.log("");
-        console.log("6--Ver itens");
+        console.log("4--Mostrar personagens");
         console.log("");
         console.log("»»——————————　★　——————————««");
         const opcao = +write("Escolha uma opção: ");
         switch (opcao) {
             case 1:
-                console.log(`\nO seu dado caiu em ${dado.jogar()}\n`);
+                console.log(`\nO seu dado caiu em ${dado.jogar()}`);
                 dado.sortearItem(jogo.jogador1);
+                dado.sortearItem(jogo.jogador2);
                 break;
             case 2:
                 jogo.jogar();
@@ -161,12 +155,9 @@ function menu() {
             case 3:
                 throw console.error("O jogo foi encerrado");
             case 4:
-                break;
-            case 5:
                 console.table(jogo.jogador1);
                 console.table(jogo.jogador2);
-            case 6:
-                console.log(Dado_1.itens);
+                break;
             default:
                 console.log("Opção inválida");
                 break;

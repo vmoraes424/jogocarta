@@ -1,19 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Dado = exports.itens = void 0;
+exports.Dado = void 0;
 const Item_1 = require("./Item");
-exports.itens = [];
 class Dado {
     constructor(_lados) {
         this._lados = _lados;
         this.item = [
-            new Item_1.Item("Tocha", 10, 0, 0, 0),
-            new Item_1.Item("Escudo", 10, 10, 10, 10),
-            new Item_1.Item("Espada", 10, 10, 10, 10),
-            new Item_1.Item("Arco", 10, 10, 10, 10),
-            new Item_1.Item("Flecha", 10, 10, 10, 10),
-            new Item_1.Item("Lança", 10, 10, 10, 10),
-            new Item_1.Item("Adaga", 10, 10, 10, 10),
+            new Item_1.Tocha(),
+            new Item_1.Escudo(),
+            new Item_1.Chinelo(),
+            new Item_1.Adaga(),
+            new Item_1.Praga(),
+            new Item_1.Espada(),
+            new Item_1.Veneno(),
         ];
     }
     get itemSorteado() {
@@ -24,11 +23,8 @@ class Dado {
     }
     sortearItem(carta) {
         const itemSorteado = this.item[Math.floor(Math.random() * this.item.length)];
-        itemSorteado.modificarDefesa(carta, itemSorteado.defesa);
-        itemSorteado.modificarForca(carta, itemSorteado.forca);
-        itemSorteado.modificarResistencia(carta, itemSorteado.resistencia);
-        itemSorteado.modificarVida(carta, itemSorteado.vida);
-        console.log("\n\n\nVocê recebeu o item " + itemSorteado.nome);
+        itemSorteado.modificarStatus(carta, itemSorteado.forca, itemSorteado.defesa, itemSorteado.vida);
+        console.log(`\n${carta.nome} recebeu o item ${itemSorteado.nome}!`);
     }
     jogar() {
         return Math.floor(Math.random() * this._lados) + 1;
